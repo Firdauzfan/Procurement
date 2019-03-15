@@ -183,8 +183,6 @@
 							</div>
 						</div>
 
-						<?php echo '<a href="#" type="button" onclick="qsnumber('.$data->id.')"> Show Data </a>';  ?>
-
 					</div>
 
 
@@ -219,7 +217,7 @@
 												 <th>Quantity</th>
 												 <th>UM</th>
 												 <th>Price</th>
-												 <th>Total</th>
+												 <!-- <th>Total</th> -->
 											</tr>
 									 </thead>
 
@@ -249,6 +247,11 @@
 	</form>
 </div>
 
+<?php
+$dataid = $data->id;
+
+ ?>
+
 <link href="https://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css" rel="stylesheet">
 <link rel="stylesheet" href='{{ asset("/css/jquery-ui.min.css") }}' />
 <!-- <style>.dataTables_length{display: none;} .dataTables_filter{display: none;}</style> -->
@@ -277,7 +280,7 @@ function getItemTable(productIds, qsId)
                 { data: 'qty', name: 'qty' },
                 { data: 'um', name: 'um' },
 								{ data: 'unit_cost', name: 'unit_cost' },
-                { data: 'total', name: 'total' },
+                // { data: 'total', name: 'total' },
                 // { data: 'delete', name: 'delete' },
 
              ]
@@ -304,6 +307,10 @@ function qsnumber(value)
 	});
 
 }
+
+var dataid = "<?php echo $dataid ?>";
+// console.log(dataid)
+window.onload=qsnumber(dataid);
 
 
  </script>

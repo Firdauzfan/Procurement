@@ -88,6 +88,8 @@ class RfqController extends Controller
                 $rfqDetail['status'] = 1;
                 $rfqDetail['validation_needed'] = null;
                 $rfqDetail['rfq_id'] = $rfq->id;
+                $rfqDetail['created_by'] = Auth::user()->name;
+                $rfqDetail['modified_by'] = Auth::user()->name;
 
                 //SAVE DETAIL
                 $rfqdet = RfqDetail::create( $rfqDetail );

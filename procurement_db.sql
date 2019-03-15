@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 14, 2019 at 10:27 AM
+-- Generation Time: Mar 15, 2019 at 05:11 PM
 -- Server version: 5.7.25-0ubuntu0.18.04.2
 -- PHP Version: 7.2.16-1+ubuntu18.04.1+deb.sury.org+1
 
@@ -106,6 +106,33 @@ CREATE TABLE `contract_supplier` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `detail_pr_term`
+--
+
+CREATE TABLE `detail_pr_term` (
+  `id` bigint(20) NOT NULL,
+  `sequence_number` int(11) NOT NULL DEFAULT '0',
+  `type_product_id` int(11) NOT NULL DEFAULT '0',
+  `product_id` int(11) NOT NULL,
+  `qty_qs` varchar(191) NOT NULL,
+  `um_qs` varchar(191) NOT NULL,
+  `status` varchar(191) DEFAULT NULL,
+  `created_by` varchar(191) NOT NULL,
+  `updated_at` datetime NOT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `detail_pr_term`
+--
+
+INSERT INTO `detail_pr_term` (`id`, `sequence_number`, `type_product_id`, `product_id`, `qty_qs`, `um_qs`, `status`, `created_by`, `updated_at`, `created_at`) VALUES
+(1, 0, 0, 9, '55', 'Pcs', '2', 'Firdauz Fanani', '2019-03-15 07:02:14', '2019-03-15 07:02:14'),
+(3, 0, 0, 10, '22', 'yes', '2', 'Firdauz Fanani', '2019-03-15 09:46:00', '2019-03-15 09:46:00');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `detail_rfq_term`
 --
 
@@ -116,7 +143,7 @@ CREATE TABLE `detail_rfq_term` (
   `product_id` int(11) NOT NULL,
   `qty_rfi` varchar(191) NOT NULL,
   `um_rfi` varchar(191) NOT NULL,
-  `status` varchar(191) NOT NULL,
+  `status` varchar(191) DEFAULT NULL,
   `created_by` varchar(191) NOT NULL,
   `updated_at` datetime NOT NULL,
   `created_at` datetime NOT NULL
@@ -579,6 +606,7 @@ INSERT INTO `po_supplier_detail` (`id`, `pos_id`, `pr_detail_id`, `sequence_numb
 CREATE TABLE `purchase_request` (
   `id` int(10) UNSIGNED NOT NULL,
   `pr_number` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `qs_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `request_from` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `request_mode` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `pr_dept` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -604,8 +632,10 @@ CREATE TABLE `purchase_request` (
 -- Dumping data for table `purchase_request`
 --
 
-INSERT INTO `purchase_request` (`id`, `pr_number`, `request_from`, `request_mode`, `pr_dept`, `pr_reference_type`, `pr_reference_id`, `pr_requester_id`, `purpose`, `purpose_remark`, `status`, `pr_date`, `rejected`, `reject_reason`, `approved`, `approved_by`, `approved_date`, `created_by`, `modified_by`, `created_at`, `updated_at`) VALUES
-(1, '12345', 'GSPE', '0', NULL, NULL, NULL, NULL, 'tes1', 'Testing', NULL, '2003-02-22', 1, 'tes', 0, 'Firdauz Fanani', '2019-02-25 00:00:00', 'Firdauz Fanani', 'Firdauz Fanani', '2019-02-22 02:19:23', '2019-02-25 18:33:45');
+INSERT INTO `purchase_request` (`id`, `pr_number`, `qs_id`, `request_from`, `request_mode`, `pr_dept`, `pr_reference_type`, `pr_reference_id`, `pr_requester_id`, `purpose`, `purpose_remark`, `status`, `pr_date`, `rejected`, `reject_reason`, `approved`, `approved_by`, `approved_date`, `created_by`, `modified_by`, `created_at`, `updated_at`) VALUES
+(18, '517', '31', 'tetet', '0', NULL, NULL, NULL, NULL, 'tettt', 'teee', NULL, '2019-03-15', 0, NULL, 0, NULL, NULL, 'Firdauz Fanani', 'Firdauz Fanani', '2019-03-15 02:44:40', '2019-03-15 02:44:40'),
+(19, '5617', '30', 'yyy', '0', NULL, NULL, NULL, NULL, 'yw', 'yq', NULL, '2019-03-14', 0, NULL, 0, NULL, NULL, 'Firdauz Fanani', 'Firdauz Fanani', '2019-03-15 02:45:34', '2019-03-15 02:45:34'),
+(20, '7782', '0', 'yeye', '0', NULL, NULL, NULL, NULL, 'ytt', 'qw', NULL, '2019-03-16', 0, NULL, 0, NULL, NULL, 'Firdauz Fanani', 'Firdauz Fanani', '2019-03-15 02:46:17', '2019-03-15 02:46:17');
 
 -- --------------------------------------------------------
 
@@ -616,18 +646,30 @@ INSERT INTO `purchase_request` (`id`, `pr_number`, `request_from`, `request_mode
 CREATE TABLE `purchase_request_detail` (
   `id` int(10) UNSIGNED NOT NULL,
   `pr_id` int(11) NOT NULL,
-  `sequence_number` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `type_product_id` int(11) NOT NULL,
+  `sequence_number` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type_product_id` int(11) DEFAULT NULL,
   `product_id` int(11) NOT NULL,
   `qty_pr` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `um_pr` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `balance_qty` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `balance_qty` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `created_by` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `modified_by` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `purchase_request_detail`
+--
+
+INSERT INTO `purchase_request_detail` (`id`, `pr_id`, `sequence_number`, `type_product_id`, `product_id`, `qty_pr`, `um_pr`, `balance_qty`, `status`, `created_by`, `modified_by`, `created_at`, `updated_at`) VALUES
+(1, 17, NULL, NULL, 4, '22', 'Pcs', NULL, '1', 'Firdauz Fanani', 'Firdauz Fanani', '2019-03-14 18:38:28', '2019-03-14 18:38:28'),
+(2, 18, NULL, NULL, 2, '21', 'Pcs', NULL, '1', 'Firdauz Fanani', 'Firdauz Fanani', '2019-03-15 02:44:40', '2019-03-15 02:44:40'),
+(3, 18, NULL, NULL, 1, '12', 'Pcs', NULL, '1', 'Firdauz Fanani', 'Firdauz Fanani', '2019-03-15 02:44:40', '2019-03-15 02:44:40'),
+(4, 19, NULL, NULL, 4, '22', 'Pcs', NULL, '1', 'Firdauz Fanani', 'Firdauz Fanani', '2019-03-15 02:45:34', '2019-03-15 02:45:34'),
+(5, 20, NULL, NULL, 9, '55', 'Pcs', NULL, '1', 'Firdauz Fanani', 'Firdauz Fanani', '2019-03-15 02:46:17', '2019-03-15 02:46:17'),
+(7, 20, NULL, NULL, 1, '22', 'yes', NULL, '0', 'Firdauz Fanani', 'Firdauz Fanani', '2019-03-15 03:09:20', '2019-03-15 03:09:20');
 
 -- --------------------------------------------------------
 
@@ -671,11 +713,7 @@ CREATE TABLE `quotation_supplier` (
 --
 
 INSERT INTO `quotation_supplier` (`id`, `qs_num`, `qs_date`, `rfq_id`, `rejected`, `reject_reason`, `approved`, `approved_by`, `approved_date`, `supplier_id`, `supplier_contact_id`, `shipment_term`, `payment_term`, `import_via`, `cost_freight`, `cost_freight_amount`, `qs_rating`, `remark`, `attached_file`, `status`, `delivertime`, `discount`, `tax`, `termcondition`, `created_by`, `modified_by`, `created_at`, `updated_at`) VALUES
-(3, 1, '2019-02-20', 7, 0, '', 1, 'Firdauz Fanani', '2019-02-20 15:07:57', 5, 5, 'Shipment test', 'Payment Test', 0, 0, '800000', '8', 'Good', 'link to wireframe.txt', 'On Progress', 50, 0, 0, 'tes', 'Firdauz Fanani', 'Firdauz Fanani', '2019-02-19 00:55:17', '2019-02-25 02:11:49'),
-(4, 157, '2019-02-20', 7, 0, '', 1, 'Firdauz Fanani', '2019-02-20 15:52:09', 5, 5, 'tesss', 'tes', 0, 0, 'tes', 'tes', 'tes', 'link to wireframe.txt', 'tesss', 5, 0, 0, 'tes', 'Firdauz Fanani', 'Firdauz Fanani', '2019-02-20 01:45:17', '2019-02-25 01:47:10'),
-(10, 5123, '2019-02-25', 7, 1, 'test', 0, 'Firdauz Fanani', NULL, 5, 5, 'Shipment test', 'Payment Test', 0, 0, '5000', '5', 'tes', 'link to wireframe.txt', 'On Progress', 100, 15, 5, 'tes', 'Firdauz Fanani', 'Firdauz Fanani', '2019-02-25 00:03:40', '2019-02-25 02:12:01'),
-(11, 514, '2019-03-12', 3, 0, NULL, 0, NULL, NULL, 5, 5, 'Hello', 'Cash', 0, 0, '5000', '5', 'Testing', 'wp_db.sql', 'Done', 5, 50, 10, 'tes', 'Firdauz Fanani', 'Firdauz Fanani', '2019-03-11 20:47:55', '2019-03-11 20:47:55'),
-(30, 6153, '2019-03-12', 3, 0, NULL, 0, NULL, NULL, 5, 5, 'Shipment test 2', 'Payment Test1', 0, 0, '5000', '5', '5', 'wp_db.sql', 'Done', 5, 10, 5, 'tes', 'Firdauz Fanani', 'Firdauz Fanani', '2019-03-12 01:37:26', '2019-03-12 01:37:26'),
+(30, 6153, '2019-03-12', 3, 1, 'hello', 0, 'Firdauz Fanani', NULL, 5, 5, 'Shipment test 2', 'Payment Test1', 0, 0, '5000', '5', '5', 'wp_db.sql', 'Done', 5, 10, 5, 'tes', 'Firdauz Fanani', 'Firdauz Fanani', '2019-03-12 01:37:26', '2019-03-14 01:02:11'),
 (31, 5522, '2019-03-13', 1, 1, 'tes', 0, 'Firdauz Fanani', NULL, 2, 2, 'Shipment test 2', 'Payment Test', 0, 0, '5000', '5', '2', 'wp_db.sql', 'tes', 5, 10, 5, 'tes', 'Firdauz Fanani', 'Firdauz Fanani', '2019-03-12 01:41:03', '2019-03-13 01:16:36');
 
 -- --------------------------------------------------------
@@ -1077,6 +1115,12 @@ ALTER TABLE `contract_supplier`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `detail_pr_term`
+--
+ALTER TABLE `detail_pr_term`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `detail_rfq_term`
 --
 ALTER TABLE `detail_rfq_term`
@@ -1300,6 +1344,11 @@ ALTER TABLE `complain_letter`
 ALTER TABLE `contract_supplier`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
+-- AUTO_INCREMENT for table `detail_pr_term`
+--
+ALTER TABLE `detail_pr_term`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+--
 -- AUTO_INCREMENT for table `detail_rfq_term`
 --
 ALTER TABLE `detail_rfq_term`
@@ -1383,12 +1432,12 @@ ALTER TABLE `po_supplier_detail`
 -- AUTO_INCREMENT for table `purchase_request`
 --
 ALTER TABLE `purchase_request`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 --
 -- AUTO_INCREMENT for table `purchase_request_detail`
 --
 ALTER TABLE `purchase_request_detail`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `quotation_supplier`
 --

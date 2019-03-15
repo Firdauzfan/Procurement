@@ -14,7 +14,9 @@
 			@endif
 		</div>
 	</div>
-	<div class="tab-content padding40px shadowDiv">
+
+
+	<div class="tab-content padding40px shadowDiv" style="margin-bottom:2%">
 
 			<input required="" name="id" value="{{ $data->id }}" class="form-control m-input" type="hidden">
 			{!! csrf_field() !!}
@@ -187,7 +189,16 @@
 							</div>
 						</div>
 
-						<?php echo '<a href="#" type="button" onclick="qsnumber('.$data->id.')"> Show Data </a>';  ?>
+						<style>.dataTables_length{display: none;} .dataTables_filter{display: none;}</style>
+						<table class="table table-bordered" id="table">
+									 <thead>
+											<tr>
+												 <!-- <th>Quotation Number</th> -->
+												 <th>Action</th>
+												 <th>Reason</th>
+											</tr>
+									 </thead>
+								</table>
 
 					</div>
 
@@ -196,22 +207,39 @@
 
 			</div>
 	</div>
+
+	<div class="tab-content padding40px shadowDiv itemDiv">
+
+			<span class="product-tab">Products</span>
+
+			<div class="row" id="m_user_profile_tab_1">
+
+				<!-- Item Module -->
+
+				<table class="table table-bordered" id="table2">
+					<thead>
+									<tr>
+										 <th>MFR</th>
+										 <th>Part Name</th>
+										 <th>Part Number</th>
+										 <th>Part Description</th>
+										 <th>Quantity</th>
+										 <th>UM</th>
+										 <th>Price</th>
+										 <th>Total</th>
+									</tr>
+							 </thead>
+
+				</table>
+
+			</div>
+		</div>
+
 	<?php
   $dataid = $data->id;
 
 	 ?>
 
-	<div class="tab-content padding40px">
-		<table class="table table-bordered" id="table">
-           <thead>
-              <tr>
-                 <th>Quotation Number</th>
-                 <th>Action</th>
-                 <th>Reason</th>
-              </tr>
-           </thead>
-        </table>
-	</div>
 
   <!-- Modal -->
   <div id="myModal" class="modal fade" role="dialog">
@@ -246,7 +274,7 @@
 
 <script type="text/javascript" src='{{ asset("/js/dataTables.bootstrap4.min.js") }}'></script>
 
-<script type="text/javascript">
+<script>
 var dataid = "<?php echo $dataid ?>";
 console.log(dataid)
 
@@ -256,13 +284,16 @@ $(function() {
                serverSide: true,
                ajax: "{{ URL::to('quotation/approve/data/') }}/"+dataid,
                columns: [
-                        { data: 'qs_num', name: 'qs_num' },
-                        { data: 'action', name: 'action', searchable: 'false' },
+                        // { data: 'qs_num', name: 'qs_num' },
+                        { data: 'action', name: 'qs_num', searchable: 'false' },
                         { data: 'reason', name: 'reason', searchable: 'false' },
 
                      ]
             });
          });
+</script>
+<script type="text/javascript">
+var dataid = "<?php echo $dataid ?>";
 
 function reject(id, status)
 {
@@ -277,5 +308,53 @@ function reject(id, status)
      // $('#addBookDialog').modal('show');
 });*/
 
+function getItemTable(productIds, qsId)
+{
+	console.log(productIds)
+	console.log(qsId)
+	$(function() {
+       var table = $('#table2').DataTable({
+       processing: true,
+       serverSide: true,
+       ajax: "{{ URL::to('items/tableqs') }}/"+productIds+"/"+qsId,
+       columns: [
+                { data: 'mfr', name: 'mfr' },
+                { data: 'part_name', name: 'part_name' },
+                { data: 'part_num', name: 'part_num' },
+                { data: 'part_desc', name: 'part_desc' },
+								// { data: 'sequence_number', name: 'sequence_number' },
+								// { data: 'type_product_id', name: 'type_product_id' },
+                { data: 'qty', name: 'qty' },
+                { data: 'um', name: 'um' },
+								{ data: 'unit_cost', name: 'unit_cost' },
+                // { data: 'total', name: 'total' },
+                // { data: 'delete', name: 'delete' },
+
+             ]
+    });
+
+
+ 	});
+}
+
+
+//
+function qsnumber(value)
+{
+	// console.log(value)
+	$.ajax(
+	{
+	  url: "{{ URL::to('items/qsnumber/get') }}/"+value
+	})
+	.done(function(data)
+	{
+		var table = $('#table').DataTable();
+		table.destroy();
+		getItemTable( data.productIds, data.qsId );
+	});
+
+}
+// console.log(dataid)
+window.onload=qsnumber(dataid);
  </script>
 @endsection

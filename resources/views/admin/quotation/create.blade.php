@@ -195,7 +195,7 @@
 							                 <th>Quantity</th>
 							                 <th>UM</th>
 															 <th>Price</th>
-															 <th>Total</th>
+															 <!-- <th>Total</th> -->
 							                 <!-- <th>Action</th> -->
 							              </tr>
 							           </thead>
@@ -256,7 +256,7 @@ function getItemTable(productIds, rfqId)
                 { data: 'qty', name: 'qty' },
                 { data: 'um', name: 'um' },
 								{ data: 'unit_cost', name: 'unit_cost' },
-                { data: 'total', name: 'total' },
+                // { data: 'total', name: 'total' },
                 // { data: 'delete', name: 'delete' },
 
              ]

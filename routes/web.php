@@ -98,6 +98,9 @@ Route::prefix('items')->group(function() {
   Route::get('/table3/{productIds}/{id}', 'Admin\ItemsController@itemTable3')->name('item_table3');
   Route::get('/tablerfq/{productIds}/{rfqId}', 'Admin\ItemsController@itemTableRfq')->name('item_table_rfq');
   Route::get('/tableqs/{productIds}/{qsId}', 'Admin\ItemsController@itemTableQs')->name('item_table_qs');
+  Route::get('/tableqs2/{productIds}/{qsId}', 'Admin\ItemsController@itemTableQs2')->name('item_table_qs2');
+  Route::get('/tableqs3/{productIds}/{id}', 'Admin\ItemsController@itemTableQs3')->name('item_table_qs3');
+  Route::get('/tablepr/{productIds}/{prId}', 'Admin\ItemsController@itemTablePr')->name('item_table_pr');
 	Route::get('/delete/{id}', 'Admin\ItemsController@delete')->name('delete_item');
 	Route::get('/view/{id}', 'Admin\ItemsController@view')->name('view_item');
 	Route::post('/update', 'Admin\ItemsController@update')->name('update_item');
@@ -106,6 +109,9 @@ Route::prefix('items')->group(function() {
   Route::any('/inquirycustomer3/get/{id}', 'Admin\ItemsController@getItemsByCustomer3')->name('get-items-by-customer3');
   Route::any('/rfqnumber/get/{id}', 'Admin\ItemsController@getItemsByRfq')->name('get-items-by-rfq');
   Route::any('/qsnumber/get/{id}', 'Admin\ItemsController@getItemsByQs')->name('get-items-by-qs');
+  Route::any('/qsnumber2/get/{id}', 'Admin\ItemsController@getItemsByQs2')->name('get-items-by-qs2');
+  Route::any('/qsnumber3/get', 'Admin\ItemsController@getItemsByQs3')->name('get-items-by-qs3');
+  Route::any('/prnumber/get/{id}', 'Admin\ItemsController@getItemsByPr')->name('get-items-by-pr');
 
 });
 
@@ -175,12 +181,16 @@ Route::prefix('purchase_request')->group(function() {
 	Route::post('/update', 'Admin\PrController@update')->name('update_purchase_request');
 	Route::get('/detail/{id}', 'Admin\PrController@detail')->name('detail_purchase_request');
 	Route::post('/save/detail', 'Admin\PrController@saveDetail')->name('save_purchase_request_detail');
-  Route::get('approve/data', 'Admin\PrController@getApproveData')->name('purchase_request_approve_data');
+  Route::get('approve/data/{id}', 'Admin\PrController@getApproveData')->name('purchase_request_approve_data');
   Route::get('approve/data2', 'Admin\PrController@getApproveData2')->name('purchase_request_approve_data2');
   Route::get('/purchase_request/approve', 'Admin\PrController@approve')->name('purchase_request_approve');
   Route::get('/view/approve/{id}', 'Admin\PrController@viewApprove')->name('view_purchase_request_approve');
 	Route::get('/purchase_request/approve/status/{id}/{status}', 'Admin\PrController@approveStatus')->name('purchase_request_approve_status_approve');
   Route::post('/purchase_request/reject/status', 'Admin\PrController@approveStatus')->name('purchase_request_approve_status');
+  Route::post('/save_additem', 'Admin\PrController@saveItemData')->name('save_additem');
+  Route::post('/save_additem_update', 'Admin\PrController@saveItemDataUpdate')->name('save_additem_update');
+  Route::get('/itemdatadeletetable/{id}', 'Admin\PrController@deleteItemDataTable')->name('itemdatadeletetable');
+  Route::get('/itemdatadeletetable2/{id}', 'Admin\PrController@deleteItemDataTable2')->name('itemdatadeletetable2');
 });
 
 // Purchase Order Supplier

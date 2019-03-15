@@ -382,7 +382,6 @@ class QuotationController extends Controller
         // Get Supplier
         $records = Quotation::query()->whereIn( 'id', explode( ',', $dataid ) );
 
-
         return Datatables::of($records)
                 ->editColumn('qs_num', function($record) {
 

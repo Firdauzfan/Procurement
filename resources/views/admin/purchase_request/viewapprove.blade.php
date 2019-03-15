@@ -14,15 +14,15 @@
 			@endif
 		</div>
 	</div>
-  <div class="tab-content padding40px shadowDiv">
+  <div class="tab-content padding40px shadowDiv" style="margin-bottom:2%">
 
       {!! csrf_field() !!}
       <div class="row" id="m_user_profile_tab_1">
           <div class="col-md-6">
             <div class="form-group m-form__group row">
-              <label for="example-text-input" class="col-md-3 col-form-label">PR #</label>
+              <label for="example-text-input" class="col-md-3 col-form-label">PR Number</label>
               <div class="col-md-7">
-                <select required="" name="pr_number" class="form-control">
+                <select required="" name="pr_number" class="form-control" onchange="location = this.value;">
                   @foreach( $dataall as $get )
                     @if( $get->pr_number == $data->pr_number)
                       <option value="{{ $data->pr_number }}" selected=""> {{ $data->pr_number }}</option>
@@ -71,6 +71,16 @@
                 <input required="" name="purpose_remark" value="{{ $data->purpose_remark }}" class="form-control m-input" type="text">
               </div>
             </div>
+
+						<table class="table table-bordered" id="table">
+									 <thead>
+											<tr>
+												 <!-- <th>Purchase Request Number</th> -->
+												 <th>Action</th>
+												 <th>Reason</th>
+											</tr>
+									 </thead>
+								</table>
           </div>
 
           <input required="" type="hidden" value="{{ $data->id }}" name="id">
@@ -78,19 +88,30 @@
       </div>
 
   </div>
+	<div class="tab-content padding40px shadowDiv itemDiv">
 
+			<span class="product-tab">Products</span>
 
-	<div class="tab-content padding40px">
-		<table class="table table-bordered" id="table">
-           <thead>
-              <tr>
-                 <th>Purchase Request Number</th>
-                 <th>Action</th>
-                 <th>Reason</th>
-              </tr>
-           </thead>
-        </table>
-	</div>
+			<div class="row" id="m_user_profile_tab_1">
+
+				<!-- Item Module -->
+
+				<table class="table table-bordered" id="table2">
+					<thead>
+									<tr>
+										 <th>MFR</th>
+										 <th>Part Name</th>
+										 <th>Part Number</th>
+										 <th>Part Description</th>
+										 <th>Quantity</th>
+										 <th>UM</th>
+									</tr>
+							 </thead>
+
+				</table>
+
+			</div>
+		</div>
 
   <!-- Modal -->
   <div id="myModal" class="modal fade" role="dialog">
@@ -117,6 +138,12 @@
   </div>
 
 </div>
+
+<?php
+$dataid = $data->id;
+
+ ?>
+
 <link href="https://cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" rel="stylesheet">
 <link rel="stylesheet" href='{{ asset("/css/jquery-ui.min.css") }}' />
 
@@ -125,27 +152,84 @@
 
 <script type="text/javascript" src='{{ asset("/js/dataTables.bootstrap4.min.js") }}'></script>
 
-<script type="text/javascript">
+<script>
+var dataid = "<?php echo $dataid ?>";
+console.log(dataid)
 
 $(function() {
                $('#table').DataTable({
                processing: "<img src='{{asset('build/img/jquery.easytree/loading.gif')}}'> Carregando...",
                serverSide: true,
-               ajax: "{{ route('purchase_request_approve_data') }}",
+               ajax: "{{ URL::to('purchase_request/approve/data/') }}/"+dataid,
                columns: [
-                        { data: 'pr_number', name: 'pr_number' },
-                        { data: 'action', name: 'action', searchable: 'false' },
+                        // { data: 'pr_number', name: 'pr_number' },
+                        { data: 'action', name: 'pr_number', searchable: 'false' },
                         { data: 'reason', name: 'reason', searchable: 'false' },
 
                      ]
             });
          });
 
+
+</script>
+
+<script type="text/javascript">
+
 function reject(id, status)
 {
   $(".modal-body .id").val( id );
   $(".modal-body .status").val( status );
 }
+
+function getItemTable(productIds, prId)
+{
+	console.log(productIds)
+	console.log(prId)
+	$(function() {
+       var table = $('#table2').DataTable({
+       processing: true,
+       serverSide: true,
+       ajax: "{{ URL::to('items/tablepr') }}/"+productIds+"/"+prId,
+       columns: [
+                { data: 'mfr', name: 'mfr' },
+                { data: 'part_name', name: 'part_name' },
+                { data: 'part_num', name: 'part_num' },
+                { data: 'part_desc', name: 'part_desc' },
+								// { data: 'sequence_number', name: 'sequence_number' },
+								// { data: 'type_product_id', name: 'type_product_id' },
+                { data: 'qty', name: 'qty' },
+                { data: 'um', name: 'um' },
+								// { data: 'unit_cost', name: 'unit_cost' },
+                // { data: 'total', name: 'total' },
+                // { data: 'delete', name: 'delete' },
+
+             ]
+    });
+
+
+ 	});
+}
+
+
+//
+function prnumber(value)
+{
+	// console.log(value)
+	$.ajax(
+	{
+	  url: "{{ URL::to('items/prnumber/get') }}/"+value
+	})
+	.done(function(data)
+	{
+		var table = $('#table').DataTable();
+		table.destroy();
+		getItemTable( data.productIds, data.prId );
+
+	});
+
+}
+
+window.onload=prnumber(dataid);
 /*$(document).on("click", ".reject", function () {
      var myBookId = $(this).data('id');
      $(".modal-body #bookId").val( myBookId );

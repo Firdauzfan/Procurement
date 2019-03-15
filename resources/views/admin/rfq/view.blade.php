@@ -93,15 +93,6 @@
 							</div>
 						</div>
 
-						<div class="form-group m-form__group row">
-							<!-- <label for="example-text-input" class="col-md-3 col-form-label">Status</label> -->
-							<div class="col-md-7">
-								<?php
-												echo '<a href="#" type="button" onclick="inquiryCustomer('.$data->id.')"> Show Data </a>';
-									?>
-
-							</div>
-						</div>
 					</div>
 
 			</div>
@@ -175,6 +166,10 @@
 
 	</form>
 </div>
+<?php
+$dataid = $data->id;
+
+ ?>
 
 <form action="{{ route('save_additem_update') }}" method="post">
 <div class="modal fade" id="modalLoginForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -288,6 +283,7 @@ function getItemTable3(productIds, id)
 //
 function inquiryCustomer(value)
 {
+	console.log(value)
 	$.ajax(
 	{
 	  url: "{{ URL::to('items/inquirycustomer3/get') }}/"+value
@@ -306,6 +302,10 @@ function inquiryCustomer(value)
   x.style.display = "block";
 
 }
+
+var dataid = "<?php echo $dataid ?>";
+// console.log(dataid)
+window.onload=inquiryCustomer(dataid);
 
 //
 function deleteItemTemp( uIds )

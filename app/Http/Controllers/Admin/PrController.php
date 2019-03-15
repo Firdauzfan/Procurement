@@ -13,6 +13,8 @@ use App\PurchaseOrder;
 use App\PoSupplierDetail;
 use App\Items;
 use App\PurchaseRequest;
+use App\PRDetail;
+use App\PrTerm;
 use Auth;
 use Datatables;
 
@@ -39,10 +41,11 @@ class PrController extends Controller
       $purchase_request = PurchaseRequest::all();
       $supplier = Supplier::all();
       $supplierContact = SupplierContact::all();
+      $dataall = Quotation::all();
       $rfi = Rfi::all();
 
       //
-      return view('admin/purchase_request/create')->with( 'suppliers', $supplier )->with( 'supplierContacts', $supplierContact )->with( 'rfi', $rfi )->with( 'purchase_request', $purchase_request );
+      return view('admin/purchase_request/create')->with( 'suppliers', $supplier )->with( 'dataall', $dataall )->with( 'supplierContacts', $supplierContact )->with( 'rfi', $rfi )->with( 'purchase_request', $purchase_request );
     }
 
     /**
@@ -54,6 +57,7 @@ class PrController extends Controller
     {
         $input = $request->all();
         $data['pr_number'] = $request->pr_number;
+        $data['qs_id'] = $request->qs_num;
         $data['request_from'] = $request->request_from;
         $data['purpose'] = $request->purpose;
         $data['purpose_remark'] = $request->purpose_remark;
@@ -64,35 +68,74 @@ class PrController extends Controller
         $data['modified_by'] = Auth::user()->name;
 
         //SAVE PR
-        PurchaseRequest::create( $data );
+        $prquest=PurchaseRequest::create( $data );
 
-        // //TRUNCATE DETAIL
-        // PurchaseRequest::where('pr_id', $purchase_request->id)->truncate();
-        //
-        // //DETAIL
-        // if( !empty( $request->items ) )
-        // {
-        //     //ITEMS
-        //     foreach ($request->items as $itemId => $get)
-        //     {
-        //         $prDetail['sequence_number'] = null;
-        //         $prDetail['type_product_id'] = null;
-        //         $prDetail['product_id'] = $itemId;
-        //         $prDetail['qty_pr'] = $get["qty_pr"];
-        //         $prDetail['um_pr'] = $get["um_pr"];
-        //         $prDetail['status'] = 1;
-        //         $prDetail['balance_qty '] = null;
-        //         $prDetail['created_by'] = Auth::user()->name;
-        //         $prDetail['modified_by'] = Auth::user()->name;
-        //
-        //         //SAVE DETAIL
-        //         $prDetail['pr_id'] = $purchase_request->pr_id;
-        //         PurchaseRequest::create( $prDetail );
-        //     }
-        // }
+        //DETAIL
+        if( !empty( $request->items ) )
+        {
+            //ITEMS
+            foreach ($request->items as $itemId => $get)
+            {
+                $prDetail['sequence_number'] = null;
+                $prDetail['type_product_id'] = null;
+                $prDetail['product_id'] = $itemId;
+                $prDetail['qty_pr'] = $get["qty"];
+                $prDetail['um_pr'] = $get["um"];
+                $prDetail['status'] = 1;
+                $prDetail['balance_qty'] = null;
+                $prDetail['pr_id'] = $prquest->id;
+                $prDetail['created_by'] = Auth::user()->name;
+                $prDetail['modified_by'] = Auth::user()->name;
 
-      //
+                //SAVE DETAIL
+                $prdet = PRDetail::create( $prDetail );
+            }
+        }
+
       return redirect( route('purchase_request_list') )->with('success', 'Purchase Request created');
+    }
+
+    public function saveItemData(Request $request)
+    {
+        //echo '<pre>';
+        //print_r( $request->all() );
+        //die();
+    	// Parameters
+    	  $input = $request->all();
+        $data['product_id'] = $request->product_id;
+        $data['qty_qs'] = $request->qty_rfi;
+        $data['um_qs'] = $request->um_rfi;
+
+        $data['status'] = 2;
+      	$data['created_by'] = Auth::user()->name;
+
+        //SAVE RFQ
+        $qsdet = PrTerm::create( $data );
+
+    	//
+    	return redirect( route('create_purchase_request') )->with('success', 'Add Item Success');
+    }
+
+    public function saveItemDataUpdate(Request $request)
+    {
+        //echo '<pre>';
+        //print_r( $request->all() );
+        //die();
+    	// Parameters
+    	  $input = $request->all();
+        $id=$request->id;
+        $data['pr_id'] = $request->id;
+        $data['product_id'] = $request->product_id;
+        $data['qty_pr'] = $request->qty_rfq;
+        $data['um_pr'] = $request->um_rfq;
+
+      	$data['created_by'] = Auth::user()->name;
+        $data['modified_by'] = Auth::user()->name;
+        //SAVE RFQ
+        $prdet = PrDetail::create( $data );
+
+    	//
+    	return redirect( route('view_purchase_request',$id) )->with('success', 'Add Item Success');
     }
 
     /**
@@ -179,9 +222,10 @@ class PrController extends Controller
         $rfq = Rfq::all();
         $dataall = PurchaseRequest::all();
         $data = PurchaseRequest::find( $id );
+        $qsdata = Quotation::all();
 
         //
-        return view('admin/purchase_request/view')->with( 'data', $data )->with( 'suppliers', $supplier )->with( 'supplierContacts', $supplierContact )->with( 'rfq', $rfq )->with( 'dataall', $dataall );
+        return view('admin/purchase_request/view')->with( 'qsdata', $qsdata )->with( 'data', $data )->with( 'suppliers', $supplier )->with( 'supplierContacts', $supplierContact )->with( 'rfq', $rfq )->with( 'dataall', $dataall );
     }
     /**
      * Display the specified resource.
@@ -228,20 +272,7 @@ class PrController extends Controller
       $data['created_by'] = Auth::user()->name;
       $data['modified_by'] = Auth::user()->name;
 
-      // Parameters
-
-      // $rfqDetail['rfi_detail_id'] = $request->rfi_detail_id;
-      // $rfqDetail['sequence_number'] = $request->sequence_number;
-      // $rfqDetail['type_product_id'] = $request->type_product_id;
-      // $rfqDetail['product_id'] = $request->product_id;
-      // $rfqDetail['qty_rfq'] = $request->qty_rfq;
-      // $rfqDetail['um_rfq'] = $request->um_rfq;
-      // $rfqDetail['status'] = $request->rfq_detail_status;
-      // $rfqDetail['validation_needed'] = $request->validation_needed;
-
-      //
       PurchaseRequest::where('id', $id)->update( $data );
-      // RfqDetail::where('rfq_id', $id)->update( $rfqDetail );
 
       //
       return redirect( route('purchase_request_list') )->with('success', 'Purchase Request updated!');
@@ -307,11 +338,10 @@ class PrController extends Controller
 
       }
 
-      public function getApproveData(Request $request)
+      public function getApproveData($dataid)
       {
           // Get Supplier
-          $records = PurchaseRequest::query();
-
+          $records = PurchaseRequest::query()->whereIn( 'id', explode( ',', $dataid ) );
 
           return Datatables::of($records)
                   ->editColumn('pr_number', function($record) {
@@ -361,6 +391,26 @@ class PrController extends Controller
                   ->rawColumns(['pr_number','id', 'action'])
 
               ->make(true);
+      }
+
+      public function deleteItemDataTable(Request $request, $id)
+      {
+          $data = PrTerm::where('id',$id);
+          $data->delete();
+          // $data['status'] = 2;
+          // RfiDetail::destroy( $data );
+
+          return redirect( route('create_purchase_request') )->with('success', 'Cancel Item Success');
+      }
+
+      public function deleteItemDataTable2(Request $request, $id)
+      {
+          $data = PrDetail::where('id',$id);
+          $data->delete();
+          // $data['status'] = 2;
+          // RfiDetail::destroy( $data );
+
+          return redirect( route('purchase_request_list') )->with('success', 'Delete Item Success');
       }
 
       public function getApproveData2(Request $request)
