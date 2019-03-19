@@ -34,21 +34,21 @@
 						</div>
 
 						<div class="form-group m-form__group row">
-							<label for="example-text-input" class="col-md-3 col-form-label">Quotation Supplier Date</label>
-							<div class="col-md-7">
-								<input required="" name="qs_date" value="{{ $data->qs_date }}" class="date form-control m-input" type="text">
-							</div>
-						</div>
-
-						<div class="form-group m-form__group row">
 							<label for="example-text-input" class="col-md-3 col-form-label">Request For Quote</label>
 							<div class="col-md-7">
 									@foreach( $rfq as $get )
 										@if( $data->rfq_id == $get->id )
-											<input required="" value="{{ $get->rfq_number }}" class="form-control" type="text">
+											<input required="" value="{{ $get->rfq_number }}" class="form-control" type="text" readonly>
 											<input required="" name="rfq_id" value="{{ $get->id }}" class="form-control" type="text" hidden>
 										@endif
 									@endforeach
+							</div>
+						</div>
+
+						<div class="form-group m-form__group row">
+							<label for="example-text-input" class="col-md-3 col-form-label">Quotation Supplier Date</label>
+							<div class="col-md-7">
+								<input required="" name="qs_date" value="{{ $data->qs_date }}" class="date form-control m-input" type="text" readonly>
 							</div>
 						</div>
 
@@ -126,7 +126,7 @@
 								if ($data->cost_freight == 0) {
 									echo '<input required="" name="cost_freight" value="0" class="form-control m-input" type="text" hidden>';
 									echo '<input required="" value="Paid" class="form-control m-input" type="text" readonly>';
-								}else if ($data->import_via == 1){
+								}else if ($data->cost_freight == 1){
 									echo '<input required="" name="cost_freight" value="1" class="form-control m-input" type="text" hidden>';
 									echo '<input required="" value="Not Paid" class="form-control m-input" type="text" readonly>';
 								}
@@ -193,7 +193,7 @@
 			<div class="m-subheader ">
 				<div class="d-flex align-items-center">
 					<div class="mr-auto">
-						<h3 class="m-subheader__title ">Request For Quotation Detail</h3>
+						<h3 class="m-subheader__title ">Quotation Detail</h3>
 					</div>
 				</div>
 			</div>

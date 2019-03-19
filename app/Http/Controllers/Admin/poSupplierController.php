@@ -10,6 +10,7 @@ use App\Quotation;
 use App\SupplierContact;
 use App\PurchaseOrder;
 use App\PoSupplierDetail;
+use App\PurchaseRequest;
 use App\Items;
 use Auth;
 use Datatables;
@@ -38,9 +39,10 @@ class poSupplierController extends Controller
         $supplier = Supplier::all();
         $rfq = Rfq::all();
         $supplierContact = SupplierContact::all();
+        $pr = PurchaseRequest::all();
 
         //
-        return view('admin/purchase_order/create')->with( 'suppliers', $supplier )->with( 'data', $data )->with( 'supplierContacts', $supplierContact )->with( 'rfq', $rfq );
+        return view('admin/purchase_order/create')->with( 'pr', $pr )->with( 'suppliers', $supplier )->with( 'data', $data )->with( 'supplierContacts', $supplierContact )->with( 'rfq', $rfq );
     }
 
     /**
@@ -54,7 +56,6 @@ class poSupplierController extends Controller
     	$input = $request->all();
         $data['po_number'] = $request->po_number;
         $data['pr_id'] = $request->pr_id;
-        $data['rfq_id'] = $request->rfq_id;
         $data['supplier_id'] = $request->supplier_id;
         $data['supplier_contact_id'] = $request->supplier_contact_id;
         $data['shipment_term'] = $request->shipment_term;
@@ -90,7 +91,35 @@ class poSupplierController extends Controller
         endif;
 
         //
-    	PurchaseOrder::create( $data );
+    	$Po=PurchaseOrder::create( $data );
+
+      if( !empty( $request->items ) )
+      {
+          //ITEMS
+          foreach ($request->items as $itemId => $get)
+          {
+              $records = Items::select('default_curr','lead_time','price_valid_until')->where( 'id', $itemId )->first();
+
+              $poDetail['pr_detail_id'] = $request->pr_id;
+              // $rfqDetail['sequence_number'] = $get["sequence_number"];
+              // $rfqDetail['type_product_id'] = $get["type_product_id"];
+              $poDetail['product_id'] = $itemId;
+              $poDetail['qty_pos'] = $get["qty"];
+              $poDetail['um_pos'] = $get["um"];
+              $poDetail['status'] = 1;
+              $poDetail['validation_needed'] = null;
+              $poDetail['pos_id'] = $Po->id;
+              $poDetail['curr'] = $records->default_curr;
+              $poDetail['unit_price'] = $get["unit_cost"];
+              $poDetail['lead_time'] = $records->lead_time;
+              $poDetail['price_valid_until'] = $records->price_valid_until;
+              $poDetail['created_by'] = Auth::user()->name;
+              $poDetail['modified_by'] = Auth::user()->name;
+
+              //SAVE DETAIL
+              $podet = PoSupplierDetail::create( $poDetail );
+          }
+      }
 
     	//
     	return redirect( route('purchase_order_list') )->with('success', 'Purchase order created');
@@ -229,10 +258,11 @@ class poSupplierController extends Controller
         $supplierContact = SupplierContact::all();
         $data = PurchaseOrder::find( $id );
         $dataall = PurchaseOrder::all();
+        $pr = PurchaseRequest::all();
         $rfq = Rfq::all();
 
         //
-        return view('admin/purchase_order/view')->with( 'data', $data )->with( 'suppliers', $supplier )->with( 'supplierContacts', $supplierContact )->with( 'rfq', $rfq )->with( 'dataall', $dataall );
+        return view('admin/purchase_order/view')->with( 'pr', $pr )->with( 'data', $data )->with( 'suppliers', $supplier )->with( 'supplierContacts', $supplierContact )->with( 'rfq', $rfq )->with( 'dataall', $dataall );
     }
 
     /**
@@ -309,7 +339,6 @@ class poSupplierController extends Controller
         $id = $request->id;
         $data['po_number'] = $request->po_number;
         $data['pr_id'] = $request->pr_id;
-        $data['rfq_id'] = $request->rfq_id;
         $data['supplier_id'] = $request->supplier_id;
         $data['supplier_contact_id'] = $request->supplier_contact_id;
         $data['shipment_term'] = $request->shipment_term;
@@ -325,27 +354,44 @@ class poSupplierController extends Controller
         $data['invoice_status'] = $request->invoice_status;
         $data['pos_supplier_rating'] = $request->pos_supplier_rating;
         $data['approved'] = ( isset( $input['approved'] ) ? 1 : 0 );
-        $data['approved_by'] = $request->approved_by;
-        $data['approved_date'] = date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $request->approved_date)));;
+        // $data['approved_by'] = $request->approved_by;
+        // $data['approved_date'] = date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $request->approved_date)));
         $data['created_by'] = Auth::user()->name;
         $data['modified_by'] = Auth::user()->name;
 
         /* Handle File */
 
-        if( !empty( $request->file('attached_file') ) ):
-
-            $imageTempName = $request->file('attached_file')->getPathname();
-            $imageName = $request->file('attached_file')->getClientOriginalName();
-            //echo $imageName; die;
-            $path = base_path() . '//uploads/images/';
-            $request->file('attached_file')->move($path , $imageName);
-            $data['attached_file'] = $imageName;
-            /* /Handle File  */
-
-        endif;
+        // if( !empty( $request->file('attached_file') ) ):
+        //
+        //     $imageTempName = $request->file('attached_file')->getPathname();
+        //     $imageName = $request->file('attached_file')->getClientOriginalName();
+        //     //echo $imageName; die;
+        //     $path = base_path() . '//uploads/images/';
+        //     $request->file('attached_file')->move($path , $imageName);
+        //     $data['attached_file'] = $imageName;
+        //     /* /Handle File  */
+        //
+        // endif;
 
         //
         PurchaseOrder::where('id', $id)->update( $data );
+
+        if( !empty( $request->items ) )
+        {
+            //ITEMS
+            foreach ($request->items as $itemId => $get)
+            {
+
+                $poDetail['qty_pos'] = $get["qty"];
+                $poDetail['um_pos'] = $get["um"];
+                $poDetail['unit_price'] = $get["unit_cost"];
+                $poDetail['modified_by'] = Auth::user()->name;
+
+                //SAVE DETAIL
+                $podet = PoSupplierDetail::where('pos_id', $id)->where('product_id', $itemId)->update( $poDetail );
+
+            }
+        }
 
         //
         return redirect( route('purchase_order_list') )->with('success', 'Purchase order updated!');
@@ -397,10 +443,10 @@ class poSupplierController extends Controller
 
         }
 
-        public function getApproveData(Request $request)
+        public function getApproveData($dataid)
         {
             // Get Supplier
-            $records = PurchaseOrder::query();
+            $records = PurchaseOrder::query()->whereIn( 'id', explode( ',', $dataid ) );
 
 
             return Datatables::of($records)
@@ -458,10 +504,11 @@ class poSupplierController extends Controller
             $supplierContact = SupplierContact::all();
             $rfq = Rfq::all();
             $dataall = PurchaseOrder::all();
+            $pr = PurchaseRequest::all();
             $data = PurchaseOrder::find( $id );
 
             //
-            return view('admin/purchase_order/viewapprove')->with( 'data', $data )->with( 'suppliers', $supplier )->with( 'supplierContacts', $supplierContact )->with( 'rfq', $rfq )->with( 'dataall', $dataall );
+            return view('admin/purchase_order/viewapprove')->with( 'pr', $pr )->with( 'data', $data )->with( 'suppliers', $supplier )->with( 'supplierContacts', $supplierContact )->with( 'rfq', $rfq )->with( 'dataall', $dataall );
         }
 
         public function getApproveData2(Request $request)

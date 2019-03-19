@@ -134,7 +134,6 @@
 
       </div>
 
-  </div>
 
         <div class="m-portlet__foot m-portlet__foot--fit margin50px">
           <div class="m-form__actions">
@@ -147,12 +146,9 @@
           </div>
         </div>
 
-
-    </div>
+          </div>
 
 </div>
-
-<!-- /RFQ Detail -->
 
 </form>
 </div>

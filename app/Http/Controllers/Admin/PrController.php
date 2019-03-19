@@ -89,6 +89,12 @@ class PrController extends Controller
 
                 //SAVE DETAIL
                 $prdet = PRDetail::create( $prDetail );
+
+            }
+            if ($request->qs_num == '0') {
+
+                $data = PrTerm::where('created_by', Auth::user()->name);
+                $data->delete();
             }
         }
 

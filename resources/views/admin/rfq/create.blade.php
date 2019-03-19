@@ -156,7 +156,7 @@
 										 <!-- <th>Sequence Number</th>
 										 <th>Type Product Id</th> -->
 		                 <th>Quantity</th>
-		                 <th>UM (Pcs,Set)</th>
+		                 <th>UM</th>
 		                 <th>Action</th>
 
 		              </tr>

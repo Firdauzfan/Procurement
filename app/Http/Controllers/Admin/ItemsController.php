@@ -16,6 +16,8 @@ use App\Quotation;
 use App\QuotationDetail;
 use App\PurchaseRequest;
 use App\PRDetail;
+use App\PurchaseOrder;
+use App\PoSupplierDetail;
 use App\PrTerm;
 use Auth;
 use Datatables;
@@ -50,6 +52,27 @@ class ItemsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+     public function getItemsByPo($poId)
+     {
+         //
+         $allIds = [];
+         $response = [];
+         $pod = PurchaseOrder::find( $poId )->details;
+
+         //
+         foreach ($pod as $get)
+         {
+             $allIds[] = $get->product_id;
+         }
+
+         //
+         $allIdsString = implode(',', $allIds);
+         $response['productIds'] = $allIdsString;
+         $response['poId'] = $poId;
+
+         return $response;
+     }
+
      public function getItemsByPr($prId)
      {
          //
@@ -601,6 +624,116 @@ class ItemsController extends Controller
                  })
 
                  ->rawColumns(['type_product_id','sequence_number','id','qty','um','delete'])
+
+             ->make(true);
+     }
+
+     public function itemTablePo( $productIds, $prId )
+     {
+
+         $records = Items::query()->whereIn( 'id', explode( ',', $productIds ) );
+
+         $this->qsIdGlobal = $prId;
+         $this->gPIds = $productIds;
+
+         return Datatables::of($records, $prId)
+                 ->editColumn('mfr', function($record) {
+
+                     return $record->mfr;
+                 })
+                 ->editColumn('part_num', function($record) {
+
+                     return $record->part_num;
+                 })
+                 ->editColumn('part_name', function($record) {
+
+                     return $record->part_name;
+                 })
+                 ->editColumn('part_desc', function($record) {
+
+                     return $record->part_desc;
+                 })
+                 ->editColumn('qty', function($record) {
+
+                     $qty = PRDetail::select('qty_pr')->where( 'pr_id', $this->qsIdGlobal )->where( 'product_id', $record->id )->first()->qty_pr;
+
+                     return "<input class='item-um' type='text' value='$qty' name='items[".$record->id."][qty]'>";
+                     // return $qty;
+                 })
+                 ->editColumn('um', function($record) {
+
+                     $um = PRDetail::select('um_pr')->where( 'pr_id', $this->qsIdGlobal )->where( 'product_id', $record->id )->first()->um_pr;
+
+                     return "<input class='item-um' type='text' value='$um' name='items[".$record->id."][um]' readonly>";
+                 })
+
+                 ->editColumn('unit_cost', function($record) {
+
+                     $unit_cost = $record->unit_cost;
+                     return "<input id='price' class='item-um' type='text' value='$unit_cost' name='items[".$record->id."][unit_cost]'>";
+                     // return $itemprice;
+                 })
+
+                 ->rawColumns(['type_product_id','sequence_number','id','qty','um','delete','unit_cost'])
+
+             ->make(true);
+     }
+
+     public function itemTablePo2( $productIds, $poId )
+     {
+
+         $records = Items::query()->whereIn( 'id', explode( ',', $productIds ) );
+
+         $this->poIdGlobal = $poId;
+         $this->gPIds = $productIds;
+
+         return Datatables::of($records, $poId)
+                 ->editColumn('mfr', function($record) {
+
+                     return $record->mfr;
+                 })
+                 ->editColumn('part_num', function($record) {
+
+                     return $record->part_num;
+                 })
+                 ->editColumn('part_name', function($record) {
+
+                     return $record->part_name;
+                 })
+                 ->editColumn('part_desc', function($record) {
+
+                     return $record->part_desc;
+                 })
+                 ->editColumn('qty', function($record) {
+
+                     $qty = PoSupplierDetail::select('qty_pos')->where( 'pos_id', $this->poIdGlobal )->where( 'product_id', $record->id )->first()->qty_pos;
+
+                     return "<input class='item-um' type='text' value='$qty' name='items[".$record->id."][qty]'>";
+                     // return $qty;
+                 })
+                 ->editColumn('um', function($record) {
+
+                     $um = PoSupplierDetail::select('um_pos')->where( 'pos_id', $this->poIdGlobal )->where( 'product_id', $record->id )->first()->um_pos;
+
+                     return "<input class='item-um' type='text' value='$um' name='items[".$record->id."][um]' readonly>";
+                 })
+
+                 ->editColumn('unit_cost', function($record) {
+
+                     $unit_cost = $record->unit_cost;
+                     return "<input class='item-um' type='text' value='$unit_cost' name='items[".$record->id."][unit_cost]'>";
+                     // return $itemprice;
+                 })
+
+                 // ->editColumn('total', function($record) {
+                 //
+                 //     $itemprice = $record->item_price;
+                 //     $qty = QuotationDetail::select('qty_qs')->where( 'qs_id', $this->qsIdGlobal )->where( 'product_id', $record->id )->first()->qty_qs;
+                 //     $total = $itemprice*$qty;
+                 //     return $total;
+                 // })
+
+                 ->rawColumns(['type_product_id','sequence_number','id','qty','um','unit_cost'])
 
              ->make(true);
      }

@@ -101,6 +101,8 @@ Route::prefix('items')->group(function() {
   Route::get('/tableqs2/{productIds}/{qsId}', 'Admin\ItemsController@itemTableQs2')->name('item_table_qs2');
   Route::get('/tableqs3/{productIds}/{id}', 'Admin\ItemsController@itemTableQs3')->name('item_table_qs3');
   Route::get('/tablepr/{productIds}/{prId}', 'Admin\ItemsController@itemTablePr')->name('item_table_pr');
+  Route::get('/tablepo/{productIds}/{prId}', 'Admin\ItemsController@itemTablePo')->name('item_table_po');
+  Route::get('/tablepo2/{productIds}/{poId}', 'Admin\ItemsController@itemTablePo2')->name('item_table_po2');
 	Route::get('/delete/{id}', 'Admin\ItemsController@delete')->name('delete_item');
 	Route::get('/view/{id}', 'Admin\ItemsController@view')->name('view_item');
 	Route::post('/update', 'Admin\ItemsController@update')->name('update_item');
@@ -112,6 +114,7 @@ Route::prefix('items')->group(function() {
   Route::any('/qsnumber2/get/{id}', 'Admin\ItemsController@getItemsByQs2')->name('get-items-by-qs2');
   Route::any('/qsnumber3/get', 'Admin\ItemsController@getItemsByQs3')->name('get-items-by-qs3');
   Route::any('/prnumber/get/{id}', 'Admin\ItemsController@getItemsByPr')->name('get-items-by-pr');
+  Route::any('/ponumber/get/{id}', 'Admin\ItemsController@getItemsByPo')->name('get-items-by-po');
 
 });
 
@@ -204,7 +207,7 @@ Route::prefix('purchase_order')->group(function() {
 	Route::post('/update', 'Admin\poSupplierController@update')->name('update_purchase_order');
 	Route::get('/detail/{id}', 'Admin\poSupplierController@detail')->name('detail_purchase_order');
 	Route::post('/save/detail', 'Admin\poSupplierController@saveDetail')->name('save_purchase_order_detail');
-  Route::get('approve/data', 'Admin\poSupplierController@getApproveData')->name('purchase_order_approve_data');
+  Route::get('approve/data/{id}', 'Admin\poSupplierController@getApproveData')->name('purchase_order_approve_data');
   Route::get('approve/data2', 'Admin\poSupplierController@getApproveData2')->name('purchase_order_approve_data2');
   Route::get('/purchase_order/approve', 'Admin\poSupplierController@approve')->name('purchase_order_approve');
   Route::get('/view/approve/{id}', 'Admin\poSupplierController@viewApprove')->name('view_purchase_order_approve');
