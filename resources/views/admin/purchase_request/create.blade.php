@@ -15,6 +15,9 @@
 			</div>
 		</div>
 	</div>
+	<?php
+	$dataid = '0';
+	 ?>
 	<form action="{{ route('save_purchase_request') }}" method="post">
 	<div class="tab-content padding40px shadowDiv">
 
@@ -36,6 +39,9 @@
 											<option id="qsnothing" value="0" onclick="myFunction()"></option>
 									@foreach( $dataall as $get )
 											<option value="{{ $get->id }}"> {{ $get->qs_num }}</option>
+											<?php
+											$dataid = $get->id;
+											 ?>
 									@endforeach
 								</select>
 
@@ -318,6 +324,9 @@ function qsnumber(value)
 }
 }
 
+var dataid = "<?php echo $dataid ?>";
+// console.log(dataid)
+window.onload=qsnumber(dataid);
 
 //
 function deleteItemTemp( uIds )

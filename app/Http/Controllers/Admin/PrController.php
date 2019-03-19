@@ -41,7 +41,7 @@ class PrController extends Controller
       $purchase_request = PurchaseRequest::all();
       $supplier = Supplier::all();
       $supplierContact = SupplierContact::all();
-      $dataall = Quotation::all();
+      $dataall = Quotation::all()->where('status', '0');
       $rfi = Rfi::all();
 
       //
@@ -69,6 +69,9 @@ class PrController extends Controller
 
         //SAVE PR
         $prquest=PurchaseRequest::create( $data );
+        $Quotationdone['status'] = 2;
+        Quotation::where('id', $request->qs_num)->update( $Quotationdone );
+
 
         //DETAIL
         if( !empty( $request->items ) )
@@ -165,7 +168,7 @@ class PrController extends Controller
     public function getData(Request $request)
     {
         // Get Supplier
-        $records = PurchaseRequest::query();
+        $records = PurchaseRequest::query()->where('status', '0');
 
 
         return Datatables::of($records)
@@ -214,7 +217,9 @@ class PrController extends Controller
     public function delete(Request $request, $id)
     {
         //
-        PurchaseRequest::destroy( $id );
+        // PurchaseRequest::destroy( $id );
+        $prdel['status'] = 1;
+        PurchaseRequest::where('id', $id)->update( $prdel );
 
         //
         return redirect( route('purchase_request_list') )->with('success', 'Purchase Request deleted!');

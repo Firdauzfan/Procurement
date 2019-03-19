@@ -34,7 +34,7 @@ class QuotationController extends Controller
     {
         //
         $supplier = Supplier::all();
-        $rfq = Rfq::all();
+        $rfq = Rfq::all()->where('status', '0');
         $supplierContact = SupplierContact::all();
 
         //
@@ -63,7 +63,6 @@ class QuotationController extends Controller
         $data['cost_freight_amount'] = $request->cost_freight_amount;
         $data['qs_rating'] = $request->qs_rating;
         $data['remark'] = $request->remark;
-        $data['status'] = $request->status;
         $data['discount'] = $request->discount;
         $data['tax'] = $request->tax;
         $data['termcondition'] = $request->termcondition;
@@ -86,6 +85,8 @@ class QuotationController extends Controller
 
         //
     	$quotation=Quotation::create( $data );
+      $rfqdone['status'] = 2;
+      Rfq::where('id', $request->rfq_id)->update( $rfqdone );
 
       if( !empty( $request->items ) )
       {
@@ -138,7 +139,7 @@ class QuotationController extends Controller
     public function getData(Request $request)
     {
         // Get Supplier
-        $records = Quotation::query();
+        $records = Quotation::query()->where('status', '0');
 
         return Datatables::of($records)
                 ->editColumn('qs_num', function($record) {
@@ -226,7 +227,9 @@ class QuotationController extends Controller
     public function delete(Request $request, $id)
     {
         //
-        Quotation::destroy( $id );
+        $quotedel['status'] = 1;
+        Quotation::where('id', $id)->update( $quotedel );
+        // Quotation::destroy( $id );
 
         //
         return redirect( route('quotation_list') )->with('success', 'Quotation deleted!');

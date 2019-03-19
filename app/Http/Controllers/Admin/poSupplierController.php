@@ -39,7 +39,7 @@ class poSupplierController extends Controller
         $supplier = Supplier::all();
         $rfq = Rfq::all();
         $supplierContact = SupplierContact::all();
-        $pr = PurchaseRequest::all();
+        $pr = PurchaseRequest::all()->where('status', '0');
 
         //
         return view('admin/purchase_order/create')->with( 'pr', $pr )->with( 'suppliers', $supplier )->with( 'data', $data )->with( 'supplierContacts', $supplierContact )->with( 'rfq', $rfq );
@@ -67,7 +67,6 @@ class poSupplierController extends Controller
         $data['qs_rating'] = $request->qs_rating;
         $data['remark'] = $request->remark;
         //$data['attached_file'] = $request->attached_file;
-    	$data['status'] = $request->status;
         $data['invoice_status'] = $request->invoice_status;
         $data['pos_supplier_rating'] = $request->pos_supplier_rating;
         $data['approved'] = ( isset( $input['approved'] ) ? 1 : 0 );
@@ -92,6 +91,8 @@ class poSupplierController extends Controller
 
         //
     	$Po=PurchaseOrder::create( $data );
+      $Purchaserequestdone['status'] = 2;
+      PurchaseRequest::where('id', $request->pr_id)->update( $Purchaserequestdone );
 
       if( !empty( $request->items ) )
       {
@@ -144,7 +145,7 @@ class poSupplierController extends Controller
     public function getData(Request $request)
     {
         // Get Supplier
-        $records = PurchaseOrder::query();
+        $records = PurchaseOrder::query()->where('status', '0');
 
 
         return Datatables::of($records)
@@ -215,12 +216,6 @@ class poSupplierController extends Controller
 
                         &nbsp&nbsp&nbsp&nbsp&nbsp
 
-                        <a href="'.route('detail_purchase_order', $record->id).'"">
-                            <img class="view-action" src="'.asset("/admin/images/detail.png").'">
-                        </a>
-
-                        &nbsp&nbsp&nbsp&nbsp&nbsp
-
                         <a href="'.route('delete_purchase_order', $record->id).'" OnClick="return confirm(\' Are you sure to delete it \');"">
                             <img class="delete-action" src="'.asset("/admin/images/delete.png").'">
                         </a>
@@ -240,7 +235,10 @@ class poSupplierController extends Controller
     public function delete(Request $request, $id)
     {
         //
-        PurchaseOrder::destroy( $id );
+        // PurchaseOrder::destroy( $id );
+        $podel['status'] = 1;
+        PurchaseOrder::where('id', $id)->update( $podel );
+
 
         //
         return redirect( route('purchase_order_list') )->with('success', 'Purchase order deleted!');

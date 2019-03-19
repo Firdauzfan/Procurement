@@ -37,7 +37,7 @@ class RfqController extends Controller
         //
         $supplier = Supplier::all();
         $supplierContact = SupplierContact::all();
-        $rfi = Rfi::all();
+        $rfi = Rfi::all()->where('status', '0');
 
         //
         return view('admin/rfq/create')->with( 'suppliers', $supplier )->with( 'supplierContacts', $supplierContact )->with( 'rfi', $rfi );
@@ -63,12 +63,13 @@ class RfqController extends Controller
         $data['order_date'] = $request->order_date;
         $data['termcondition'] = $request->termcondition;
 
-        $data['status'] = 1;
       	$data['created_by'] = Auth::user()->name;
     	  $data['modified_by'] = Auth::user()->name;
 
         //SAVE RFQ
         $rfq = Rfq::create( $data );
+        $rfindone['status'] = 2;
+        Rfi::where('id', $request->inquiry_customer)->update( $rfindone );
 
         //TRUNCATE DETAIL
         // RfqDetail::where('rfq_id', $rfq->id)->truncate();
@@ -243,7 +244,7 @@ class RfqController extends Controller
     public function getData(Request $request)
     {
         // Get Supplier
-        $records = Rfq::query();
+        $records = Rfq::query()->where('status', '0');
 
 
         return Datatables::of($records)
@@ -310,7 +311,9 @@ class RfqController extends Controller
     public function delete(Request $request, $id)
     {
         //
-        Rfq::destroy( $id );
+        // Rfq::destroy( $id );
+        $rfqdel['status'] = 1;
+        Rfq::where('id', $id)->update( $rfqdel );
 
         //
         return redirect( route('rfq_list') )->with('success', 'Supplier deleted!');
@@ -366,7 +369,7 @@ class RfqController extends Controller
                 // $rfqDetail['product_id'] = $itemId;
                 $rfqDetail['qty_rfq'] = $get["qty"];
                 $rfqDetail['um_rfq'] = $get["um"];
-                $rfqDetail['status'] = 1;
+                // $rfqDetail['status'] = 1;
                 $rfqDetail['validation_needed'] = null;
 
                 //SAVE DETAIL

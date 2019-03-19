@@ -9,6 +9,9 @@
 			</div>
 		</div>
 	</div>
+	<?php
+	$dataid = '0';
+	 ?>
 	<form action="{{ route('save_quotation') }}" method="post" enctype="multipart/form-data">
 	<div class="tab-content padding40px shadowDiv">
 
@@ -36,6 +39,11 @@
 								<select required="" onchange="rfqnumber(this.value)" name="rfq_id" class="form-control">
 									@foreach( $rfq as $get )
 										<option value="{{ $get->id }}">{{ $get->rfq_number }}</option>
+
+										<?php
+										$dataid = $get->id;
+										echo $dataid;
+										 ?>
 									@endforeach
 								</select>
 							</div>
@@ -142,14 +150,6 @@
 						</div>
 
 						<div class="form-group m-form__group row">
-							<label for="example-text-input" class="col-md-3 col-form-label">Status</label>
-							<div class="col-md-7">
-								<input required="" name="status" class="form-control m-input" type="text">
-							</div>
-						</div>
-
-
-						<div class="form-group m-form__group row">
 							<label for="example-text-input" class="col-md-3 col-form-label">Tax (%)</label>
 							<div class="col-md-7">
 								<input required="" name="tax" class="form-control m-input" type="number">
@@ -228,6 +228,7 @@
 						</div>
 	</form>
 </div>
+
 <link href="https://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css" rel="stylesheet">
 <link rel="stylesheet" href='{{ asset("/css/jquery-ui.min.css") }}' />
 <!-- <style>.dataTables_length{display: none;} .dataTables_filter{display: none;}</style> -->
@@ -292,7 +293,9 @@ function rfqnumber(value)
 
 }
 //
-
+var dataid = "<?php echo $dataid ?>";
+console.log(dataid)
+window.onload=rfqnumber(dataid);
 
  </script>
  <script>

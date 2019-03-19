@@ -23,7 +23,7 @@
 								 <th>RFQ Number</th>
                  <th>Supplier</th>
                  <th>Supplier Contact</th>
-                 <th>Status</th>
+                 <!-- <th>Status</th> -->
                  <th>Date Created</th>
                  <th>Action</th>
               </tr>
@@ -50,7 +50,7 @@ $(function() {
 								 				{ data: 'rfq_number', name: 'rfq_number', searchable: 'false' },
                         { data: 'supplier_id', name: 'supplier_id' },
                         { data: 'supplier_contact_id', name: 'supplier_contact_id' },
-                        { data: 'status', name: 'status' },
+                        // { data: 'status', name: 'status' },
                         { data: 'created_at', name: 'created_at' },
                         { data: 'action', name: 'action', searchable: 'false' },
 

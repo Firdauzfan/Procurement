@@ -9,6 +9,9 @@
 			</div>
 		</div>
 	</div>
+	<?php
+	$dataid = '0';
+	 ?>
 	<form action="{{ route('save_purchase_order') }}" method="post" enctype="multipart/form-data">
 	<div class="tab-content padding40px shadowDiv">
 
@@ -28,6 +31,9 @@
 								<select required="" onchange="prnumber(this.value)" name="pr_id" class="form-control">
 									@foreach( $pr as $get )
 										<option value="{{ $get->id }}">{{ $get->pr_number }}</option>
+										<?php
+										$dataid = $get->id;
+										 ?>
 									@endforeach
 								</select>
 							</div>
@@ -126,13 +132,6 @@
 							<label for="example-text-input" class="col-md-3 col-form-label">Attached File</label>
 							<div class="col-md-7">
 								<input required="" required="" name="attached_file" class="form-control m-input file-input" type="file">
-							</div>
-						</div>
-
-						<div class="form-group m-form__group row">
-							<label for="example-text-input" class="col-md-3 col-form-label">Status</label>
-							<div class="col-md-7">
-								<input required="" required="" name="status" class="form-control m-input" type="text">
 							</div>
 						</div>
 
@@ -284,7 +283,9 @@ function prnumber(value)
 
 }
 //
-
+var dataid = "<?php echo $dataid ?>";
+// console.log(dataid)
+window.onload=prnumber(dataid);
 
  </script>
 @endsection

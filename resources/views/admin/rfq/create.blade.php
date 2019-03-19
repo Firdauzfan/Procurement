@@ -15,6 +15,9 @@
 			</div>
 		</div>
 	</div>
+	<?php
+	$dataid = '0';
+	 ?>
 	<form action="{{ route('save_rfq') }}" method="post">
 	<div class="tab-content padding40px shadowDiv">
 
@@ -51,6 +54,10 @@
 										<option id="inquiryid" value="0" onclick="myFunction()"></option>
 									@foreach( $rfi as $get )
 										<option value="{{ $get->id }}">{{ $get->customer_id }}</option>
+										<?php
+										$dataid = $get->id;
+
+										 ?>
 									@endforeach
 								</select>
 							</div>
@@ -434,6 +441,10 @@ function filterBy( value )
 	}
 }
 
+//
+var dataid = "<?php echo $dataid ?>";
+// console.log(dataid)
+window.onload=inquiryCustomer(dataid);
 //
 function deleteItemTemp( uIds )
 {
