@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 19, 2019 at 04:41 PM
+-- Generation Time: Mar 20, 2019 at 02:09 PM
 -- Server version: 5.7.25-0ubuntu0.18.04.2
 -- PHP Version: 7.2.16-1+ubuntu18.04.1+deb.sury.org+1
 
@@ -1362,7 +1362,7 @@ ALTER TABLE `contract_supplier`
 -- AUTO_INCREMENT for table `detail_pr_term`
 --
 ALTER TABLE `detail_pr_term`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `detail_rfq_term`
 --
